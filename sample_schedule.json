@@ -1,0 +1,58 @@
+{
+    "version": 100,
+    "comments": [
+        "# 如你所见，先设置科目类别，如Chinese",
+        "# 在classes下新建“Chinese”，并写入会议号（meetingId）和入会密码（password）",
+        "# 然后，比如一天有三节课",
+        "# day_schedule 中数组下标0 [[8,30],[9,10]] 是一节课的时间，意味着 8:30~9:10 是第一节课",
+        "# 数组下标1 [[9,30],[10,10]] 则为第二节课，以此类推添加更多课程",
+        "# 最后是courses，按照一周来划分，下列“Monday”中的配置即表示 第一节课=Chinese，第二节课=Chinese，第三节课=Math",
+        "# Monday中的数组大小须与day_schedule相同，否则会发生错误"
+    ],
+    "classes": {
+        "Chinese": {
+            "meetingId": "100000000",
+            "password": "666666"
+        },
+        "Math": {
+            "meetingId": "2000000000",
+            "password": "888888"
+        },
+        "English": {
+            "meetingId": "3000000000",
+            "password": "222222"
+        }
+    },
+    "day_schedule": [
+        [[8,30],[9,10]],
+        [[9,30],[10,10]],
+        [[10,30],[11,10]]
+    ],
+    "courses": {
+        "Monday": [
+            "Chinese",
+            "Chinese",
+            "Math"
+        ],
+        "Tuesday": [
+            "Math",
+            "Math",
+            "English"
+        ],
+        "Wednesday": [
+            "English",
+            "English",
+            "Math"
+        ],
+        "Thursday": [
+            "Chinese",
+            "Chinese",
+            "Math"
+        ],
+        "Friday": [
+            "Math",
+            "Math",
+            "English"
+        ]
+    }
+}

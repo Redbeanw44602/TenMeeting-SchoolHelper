@@ -1,0 +1,8 @@
+{
+    "version": 100,
+    "join": {
+        "name": "YourName",
+        "fail_retry_sec": 10,
+        "early_min": 3
+    }
+}
