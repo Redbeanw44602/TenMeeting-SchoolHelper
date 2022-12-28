@@ -10,6 +10,7 @@ CFG_VERSION         = 100
 SCHEDULE_VERSION    = 100
 
 CRON_LOOP_SLEEP = 30
+WAIT_FOR_LOAD   = 10
 
 cfg         = None
 schedule    = None
@@ -38,14 +39,14 @@ def generate_schedule():
 def run_mainjob(meetingId,password):
     driver.get(TENCENT_MEETING_URL)
 
-    time.sleep(3)
+    time.sleep(WAIT_FOR_LOAD)
 
     inputs = driver.find_elements(By.CLASS_NAME, 'join-form__input')
     inputs[0].send_keys(meetingId)
     inputs[1].send_keys(cfg['join']['name']) # personName
     driver.find_element(By.CLASS_NAME, "join-form__button").click() #join the meeting.
 
-    time.sleep(3)
+    time.sleep(WAIT_FOR_LOAD)
 
     try:
         driver.switch_to.frame(0)
@@ -55,7 +56,7 @@ def run_mainjob(meetingId,password):
     except NoSuchElementException:
         pass
 
-    time.sleep(3)
+    time.sleep(WAIT_FOR_LOAD)
 
     try:
         pwd_input = driver.find_element(By.CLASS_NAME, "tea-input")
