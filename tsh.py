@@ -14,6 +14,26 @@ CRON_LOOP_SLEEP = 30
 cfg         = None
 schedule    = None
 driver      = None
+today_schedule = None
+
+def generate_schedule():
+    global today_schedule
+    current = time.localtime(time.time())
+    s = current[:]
+    e = current[:]
+    today_schedule = []
+    for i in schedule['day_schedule']:
+        # element [[8,30],[9,10]]
+        # time tuple:
+        # 0 tm_year     5 tm_sec
+        # 1 tm_mon      6 tm_wday
+        # 2 tm_mday     7 tm_yday
+        # 3 tm_hour     8 tm_isdst
+        # 4 tm_min
+        s = s[:3] + (i[0][0], i[0][1], 0,) + s[6:]
+        e = e[:3] + (i[1][0], i[1][1], 0,) + e[6:]
+        today_schedule.append([time.mktime(s),time.mktime(e)])
+
 
 def run_mainjob(meetingId,password):
     driver.get(TENCENT_MEETING_URL)
@@ -70,23 +90,21 @@ if __name__ == '__main__':
     wday_to_str = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday']
 
     print('[[进入任务循环]]')
+    generate_schedule()
     cron_loops_count = 0
     while True:
         cron_loops_count += 1
         print('[第 %s 次常规任务循环]' % cron_loops_count)
-        current = time.localtime(time.time())
-        hr = current.tm_hour
-        mi = current.tm_min
-        da = wday_to_str[current.tm_wday]
+        current = time.time()
+        da = wday_to_str[time.localtime(current).tm_wday]
         loops_count = -1
-        print('当前时间: %s %s:%s' % (da,hr,mi))
         if schedule['courses'][da]:
             allNoClass = True
-            for i in schedule['day_schedule']:
+            for i in today_schedule:
                 loops_count += 1
-                # element [[8,30],[9,10]]
-                if not ((hr >= i[0][0] and mi + cfg['join']['early_min'] >= i[0][1]) and (hr <= i[1][0] and mi <= i[1][1])):
-                    print('不在第 %s 节课时间段 %s:%s ~ %s:%s 内' % (loops_count + 1,i[0][0],i[0][1],i[1][0],i[1][1]))
+                # element timestamp: [start,end]
+                if not (current + cfg['join']['early_min'] * 60 >= i[0] and current <= i[1]):
+                    print('不在第 %s 节课时间段内' % (loops_count + 1))
                     continue
                 allNoClass = False
                 current_class = schedule['courses'][da][loops_count]
