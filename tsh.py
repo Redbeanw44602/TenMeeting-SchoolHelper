@@ -15,7 +15,9 @@ WAIT_FOR_LOAD   = 10
 cfg         = None
 schedule    = None
 driver      = None
-today_schedule = None
+
+today           = None
+today_schedule  = None
 
 def generate_schedule():
     global today_schedule
@@ -97,9 +99,13 @@ if __name__ == '__main__':
         cron_loops_count += 1
         print('[第 %s 次常规任务循环]' % cron_loops_count)
         current = time.time()
-        da = wday_to_str[time.localtime(current).tm_wday]
+        tmp_today = wday_to_str[time.localtime(current).tm_wday]
+        if today != tmp_today:
+            print("正在更新时间表...")
+            generate_schedule()
+        today = tmp_today
         loops_count = -1
-        if schedule['courses'][da]:
+        if schedule['courses'][today]:
             allNoClass = True
             for i in today_schedule:
                 loops_count += 1
@@ -108,7 +114,7 @@ if __name__ == '__main__':
                     print('不在第 %s 节课时间段内' % (loops_count + 1))
                     continue
                 allNoClass = False
-                current_class = schedule['courses'][da][loops_count]
+                current_class = schedule['courses'][today][loops_count]
                 if not current_class:
                     print('已配置当前时间段，但没有任何课程')
                     break
