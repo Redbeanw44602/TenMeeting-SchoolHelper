@@ -93,7 +93,6 @@ if __name__ == '__main__':
     wday_to_str = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday']
 
     print('[[进入任务循环]]')
-    generate_schedule()
     cron_loops_count = 0
     while True:
         cron_loops_count += 1
@@ -111,7 +110,7 @@ if __name__ == '__main__':
                 loops_count += 1
                 # element timestamp: [start,end]
                 if not (current + cfg['join']['early_min'] * 60 >= i[0] and current <= i[1]):
-                    print('不在第 %s 节课时间段内' % (loops_count + 1))
+                    # print('不在第 %s 节课时间段内' % (loops_count + 1))
                     continue
                 allNoClass = False
                 current_class = schedule['courses'][today][loops_count]
@@ -119,15 +118,17 @@ if __name__ == '__main__':
                     print('已配置当前时间段，但没有任何课程')
                     break
                 if driver:
-                    print('正在上课...')
+                    print('正在上第 %s 节课...' % (loops_count + 1))
                     break
                 print('即将上课: 第 %s 节, %s 课程, 自动加入会议...' % (loops_count + 1, current_class))
                 meet = schedule['classes'][current_class]
                 protected_run_job(meet['meetingId'],meet['password'])
                 break
-            if allNoClass and driver:
-                driver.quit()
-                driver = None
+            if allNoClass:
+                print("当前时间没有课程")
+                if driver:
+                    driver.quit()
+                    driver = None
         else:
             print('今天没有任何课程')
         print('进入休眠 %ss' % CRON_LOOP_SLEEP)
